@@ -168,6 +168,7 @@ app.post("/api/account/delete", async (req, res) => {
 });
 
 app.post("/api/prompts", async (req, res) => {
+    console.log("___________________________________");
     let token = req.headers["x-auth-token"];
     console.log("token is", req.headers["x-auth-token"]);
     const promptValue = req.body.promptValue;
@@ -226,32 +227,24 @@ app.post("/api/prompts", async (req, res) => {
                 user,
             });
             if (chats) {
-                console.log("___________________________________");
                 console.log("chats already exist");
                 console.log("pushing new message");
-                console.log("___________________________________");
                 chats.messages.push(message);
                 await chats.save();
-                console.log("___________________________________");
                 console.log("new chats are", chats);
-                console.log("___________________________________");
             } else {
-                console.log("___________________________________");
                 console.log("creating new chat");
                 console.log("message :", message);
-                console.log("___________________________________");
                 const newChat = new Chat({
                     user,
                     messages: [message],
                 });
                 await newChat.save();
-                console.log("___________________________________");
                 console.log("saved new chat and msg");
-                console.log("___________________________________");
             }
 
-            console.log("aiResponse is ===", aiResponse);
-
+            console.log("aiResponse from post in server is ===", aiResponse);
+            console.log("___________________________________");
             res.send({ aiResponse });
         } catch (error) {
             console.error(error);
@@ -263,6 +256,7 @@ app.post("/api/prompts", async (req, res) => {
 });
 
 app.get("/api/prompts", async (req, res) => {
+    console.log("___________________________________");
     console.log("at the server level getting messages");
     let token = req.headers["x-auth-token"];
     console.log("token is", req.headers["x-auth-token"]);
@@ -276,13 +270,14 @@ app.get("/api/prompts", async (req, res) => {
 
         try {
             const chats = await Chat.find({ user });
-            console.log("chats are ", chats);
+            console.log("chats retrieved are ", chats);
             const msgs = chats[0].messages;
             console.log(msgs);
-
+            console.log("___________________________________");
             res.json({ msgs });
         } catch (error) {
             console.error(error);
+            console.log("___________________________________");
             res.status(400).send("error");
         }
     } catch (error) {
