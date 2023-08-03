@@ -245,7 +245,8 @@ app.post("/api/prompts", async (req, res) => {
 
             console.log("aiResponse from post in server is ===", aiResponse);
             console.log("___________________________________");
-            res.send({ aiResponse });
+            // res.send({ aiResponse });
+            res.json({ aiResponse });
         } catch (error) {
             console.error(error);
             res.status(400).send(error);
