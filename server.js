@@ -270,9 +270,9 @@ app.get("/api/prompts", async (req, res) => {
 
         try {
             const chats = await Chat.find({ user });
-            console.log("chats retrieved are ", chats);
+            // console.log("chats retrieved are ", chats);
             const msgs = chats[0].messages;
-            console.log(msgs);
+            // console.log(msgs);
             console.log("___________________________________");
             res.json({ msgs });
         } catch (error) {
