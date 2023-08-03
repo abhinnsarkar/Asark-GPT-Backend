@@ -1,105 +1,19 @@
-require("dotenv").config();
-// import fetch from "node-fetch";
-const fetch = (...args) =>
-    import("node-fetch").then(({ default: fetch }) => fetch(...args));
-// const fetch = require("node-fetch");
-
-// const express = require("express");
-// const cors = require("cors");
-// const mongoose = require("mongoose");
-// const config = require("config");
-
-// const auth = require("./middleware/auth");
-
-// const authRoutes = require("./routes/api/authRoutes");
-// const promptRoutes = require("./routes/api/promptRoutes");
-
-// const PORT = 1234;
-
-// const app = express();
-
-// app.use(express.json());
-// app.use(cors());
-
-// app.use("/api/auth", authRoutes);
-// // app.use("/api/prompts", promptRoutes);
-
-// mongoose
-//     .connect(process.env.mongoURI)
-//     .then(() => {
-//         app.listen(PORT, () => {
-//             console.log(`Server is listening on ${PORT}`);
-//             console.log("Connected to DB");
-//         });
-//     })
-//     .catch((err) => {
-//         console.log("database connection failed. Server not started");
-//         console.error(err);
-//     });
-
-// app.get("/api", (req, res) => {
-//     res.send("getting the api");
-// });
-
-// // app.listen(PORT, () => console.log("Server running on Port " + PORT));
-
-// app.post("/api/prompts", auth, async (req, res) => {
-//     const promptValue = req.body.promptValue;
-//     const user = req.user.id;
-//     const API_KEY = process.env.API_KEY;
-
-//     const options = {
-//         method: "POST",
-//         headers: {
-//             Authorization: `Bearer ${API_KEY}`,
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//             model: "gpt-3.5-turbo",
-//             messages: [{ role: "user", content: promptValue }],
-//             max_tokens: 100,
-//         }),
-//     };
-//     try {
-//         const response = await fetch(
-//             "https://api.openai.com/v1/chat/completions",
-//             options
-//         );
-
-//         const data = await response.json();
-//         console.log("ai said :", data.choices[0].message.content); // Log the message content
-//         res.send(data.choices[0].message.content);
-//     } catch (error) {
-//         console.error(error);
-//     }
-//     // try {
-//     //     const response = await fetch(
-//     //         "https://api.openai.com/v1/chat/completions",
-//     //         options
-//     //     );
-
-//     //     const data = await response.json();
-//     //     console.log("ai said :", data.choices[0].message.content);
-//     //     res.send("hello");
-//     // } catch (error) {
-//     //     console.error(error);
-//     // }
-// });
-
 const express = require("express");
 const socketio = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
-// const config = require("config");
+require("dotenv").config();
 const API_KEY = process.env.API_KEY;
 const jwt = require("jsonwebtoken");
-
+const fetch = (...args) =>
+    import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const auth = require("./middleware/auth");
 const Chat = require("./models/Chat");
 const User = require("./models/User");
 
 const authRoutes = require("./routes/api/authRoutes");
+const accountRoutes = require("./routes/api/accountRoutes");
 // const promptRoutes = require("./routes/api/promptRoutes");
 
 const PORT = process.env.PORT || 5000;
@@ -112,10 +26,9 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/account", accountRoutes);
 // app.use("/api/prompts", promptRoutes);
-// console.log(process.env);
-// console.log(process.env.mongoURI);
-// console.log(process.env.API_KEY);
+
 mongoose
     .connect(process.env.mongoURI)
     .then(() => {
@@ -134,37 +47,6 @@ app.get("/api", (req, res) => {
 });
 app.get("/", (req, res) => {
     res.send("getting the root");
-});
-
-app.post("/api/account/delete", async (req, res) => {
-    console.log("delete event came");
-    let token = req.headers["x-auth-token"];
-    console.log("token in delete account is", req.headers["x-auth-token"]);
-
-    if (!token) {
-        return res.status(401).json({ msg: "No Token. Authorization Denied." });
-    } else {
-        const decoded = jwt.verify(token, process.env.jwtSecret);
-        const userId = decoded.user.id;
-        console.log("user is ", userId);
-
-        try {
-            // const chats = await Chat.find({ userId });
-            // console.log("chats = ", chats);
-            await Chat.findOneAndDelete({ user: userId });
-
-            // get user
-            // const user = await User.findById(userId);
-            // console.log("user = ", userId);
-            await User.findByIdAndDelete(userId);
-
-            console.log("Account Has Been Deleted");
-            return res.status(200).json({ msg: "Account Has Been Deleted" });
-        } catch (error) {
-            console.error(error);
-            res.status(400).json({ msg: "error" });
-        }
-    }
 });
 
 app.post("/api/prompts", async (req, res) => {

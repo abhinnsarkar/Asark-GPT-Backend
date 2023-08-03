@@ -3,7 +3,6 @@ const router = express.Router();
 const authControllers = require("../../controllers/auth/authControllers");
 const Joi = require("joi");
 const validator = require("express-joi-validation").createValidator({});
-const auth = require("../../middleware/auth");
 
 const registerSchema = Joi.object({
     name: Joi.string().required(),
@@ -26,10 +25,5 @@ router.post(
     validator.body(loginSchema),
     authControllers.controllers.postLogin
 );
-// router.post(
-//     "/delete-account",
-//     auth,
-//     authControllers.controllers.postDeleteAccount
-// );
 
 module.exports = router;
