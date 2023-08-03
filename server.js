@@ -231,7 +231,7 @@ app.post("/api/prompts", async (req, res) => {
                 console.log("pushing new message");
                 chats.messages.push(message);
                 await chats.save();
-                console.log("new chats are", chats);
+                // console.log("new chats are", chats);
             } else {
                 console.log("creating new chat");
                 console.log("message :", message);
@@ -271,7 +271,7 @@ app.get("/api/prompts", async (req, res) => {
 
         try {
             const chats = await Chat.find({ user });
-            // console.log("chats retrieved are ", chats);
+            console.log("chats retrieved are ", chats);
             const msgs = chats[0].messages;
             // console.log(msgs);
             console.log("___________________________________");
