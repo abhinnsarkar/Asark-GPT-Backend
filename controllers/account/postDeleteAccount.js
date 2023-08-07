@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const postDeleteAccount = async (req, res) => {
     console.log("delete event came");
-
+    
     const decoded = jwt.verify(token, process.env.jwtSecret);
     const userId = decoded.user.id;
     console.log("user is ", userId);
