@@ -43,10 +43,10 @@ mongoose
     });
 
 app.get("/api", (req, res) => {
-    res.send("getting the api");
+    res.json({ msg: "getting the api" });
 });
 app.get("/", (req, res) => {
-    res.send("getting the root");
+    res.json({ msg: "getting the root" });
 });
 
 app.post("/api/prompts", async (req, res) => {
@@ -127,11 +127,10 @@ app.post("/api/prompts", async (req, res) => {
 
             console.log("aiResponse from post in server is ===", aiResponse);
             console.log("___________________________________");
-            // res.send({ aiResponse });
             res.json({ aiResponse });
         } catch (error) {
             console.error(error);
-            res.status(400).send(error);
+            res.status(400).json({ msg: error });
         }
     } catch (error) {
         res.status(401).json({ msg: "Token is not valid" });
@@ -161,7 +160,7 @@ app.get("/api/prompts", async (req, res) => {
         } catch (error) {
             console.error(error);
             console.log("___________________________________");
-            res.status(400).send("error");
+            res.status(400).json({ msg: "error" });
         }
     } catch (error) {
         res.status(401).json({ msg: "Token is not valid" });

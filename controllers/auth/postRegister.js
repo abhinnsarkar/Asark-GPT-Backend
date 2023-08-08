@@ -15,7 +15,7 @@ const postRegister = async (req, res) => {
 
         if (userExists) {
             console.log("user exists");
-            return res.status(409).send("E-mail already in use");
+            return res.status(409).josn({ msg: "E-mail already in use" });
         }
 
         // encrypt password
@@ -50,7 +50,7 @@ const postRegister = async (req, res) => {
         res.status(201).json({ token, user });
         // res.json({ token });
     } catch (err) {
-        return res.status(500).send("Error occured. Please try again");
+        return res.status(500).json({ msg: "Error occured. Please try again" });
     }
 };
 
