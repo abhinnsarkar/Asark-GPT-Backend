@@ -27,7 +27,7 @@ const jwt = require("jsonwebtoken");
 // const config = process.env;
 
 const verifyToken = (req, res, next) => {
-    // console.log("in verify token with headers = ", req.headers);
+    console.log("in verify token with headers = ", req.headers);
     // let token =
     //     req.body.token || req.query.token || req.headers["authorization"];
     let token = req.headers["x-auth-token"];
@@ -43,12 +43,17 @@ const verifyToken = (req, res, next) => {
     // );
 
     if (!token) {
+        // console.log("no token");
         return res.status(401).json({ msg: "No Token. Authorization Denied." });
     }
     try {
+        // console.log("yes token");
+        const myToken = req.headers["x-auth-token"];
         // const decoded = jwt.verify(token, config.get("jwtSecret"));
-        const decoded = jwt.verify(token, proces.env.jwtSecret);
+        const decoded = jwt.verify(myToken, process.env.jwtSecret);
+        // console.log("Decoded ", decoded);
         req.user = decoded.user;
+
         // req.body.user = decoded.user;
 
         // console.log(

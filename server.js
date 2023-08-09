@@ -13,7 +13,7 @@ const Chat = require("./models/Chat");
 const User = require("./models/User");
 
 const authRoutes = require("./routes/api/authRoutes");
-const accountRoutes = require("./routes/api/accountRoutes");
+// const accountRoutes = require("./routes/api/accountRoutes");
 // const promptRoutes = require("./routes/api/promptRoutes");
 
 const PORT = process.env.PORT || 5000;
@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/account", accountRoutes);
+// app.use("/api/account", accountRoutes);
 // app.use("/api/prompts", promptRoutes);
 
 mongoose
@@ -153,16 +153,60 @@ app.get("/api/prompts", async (req, res) => {
         try {
             const chats = await Chat.find({ user });
             console.log("chats retrieved are ", chats);
-            const msgs = chats[0].messages;
-            // console.log(msgs);
-            console.log("___________________________________");
-            res.json({ msgs });
+            if (chats.length === 0) {
+                const msgs = chats[0];
+                // console.log(msgs);
+                console.log("___________________________________");
+                res.json({ msgs });
+            } else {
+                const msgs = chats[0].messages;
+                // console.log(msgs);
+                console.log("___________________________________");
+                res.json({ msgs });
+            }
         } catch (error) {
             console.error(error);
             console.log("___________________________________");
             res.status(400).json({ msg: "error" });
         }
     } catch (error) {
+        res.status(401).json({ msg: "Token is not valid" });
+    }
+});
+
+app.post("/api/account/delete", async (req, res) => {
+    console.log(req.headers);
+    let token = req.headers["x-auth-token"];
+    console.log("token is", req.headers["x-auth-token"]);
+
+    if (!token) {
+        return res.status(401).json({ msg: "No Token. Authorization Denied." });
+    }
+    try {
+        console.log("token in try is ", token);
+        const decoded = jwt.verify(token, process.env.jwtSecret); // req.user = decoded.user;
+
+        console.log("delete event came");
+        console.log("Req headers inside delete:", req.headers);
+        // const token = req.headers["x-auth-token"];
+        const userId = decoded.user.id;
+        console.log("user is ", userId);
+
+        try {
+            await Chat.findOneAndDelete({ user: userId });
+
+            // get user
+            await User.findByIdAndDelete(userId);
+
+            console.log("Account Has Been Deleted");
+            return res.status(200).json({ msg: "Account Has Been Deleted" });
+        } catch (error) {
+            console.log("ERRRRRORRRRRRRR");
+            console.error(error);
+            return res.status(400).json({ msg: "Error" }); // Return here to prevent multiple responses
+        }
+    } catch (error) {
+        console.log("errreroeoreoroeor", error);
         res.status(401).json({ msg: "Token is not valid" });
     }
 });

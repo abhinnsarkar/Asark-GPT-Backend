@@ -15,7 +15,9 @@ const postRegister = async (req, res) => {
 
         if (userExists) {
             console.log("user exists");
-            return res.status(409).josn({ msg: "E-mail already in use" });
+            console.log("email taken");
+            return res.status(409).json({ msg: "E-mail already in use" });
+            // return res.json({ msg: "E-mail already in use" });
         }
 
         // encrypt password
@@ -50,6 +52,7 @@ const postRegister = async (req, res) => {
         res.status(201).json({ token, user });
         // res.json({ token });
     } catch (err) {
+        console.log("Errorrrr", err);
         return res.status(500).json({ msg: "Error occured. Please try again" });
     }
 };
