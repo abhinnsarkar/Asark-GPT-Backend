@@ -140,10 +140,12 @@ app.post("/api/prompts", async (req, res) => {
 app.get("/api/prompts", async (req, res) => {
     console.log("___________________________________");
     console.log("at the server level getting messages");
-    let token = req.headers["x-auth-token"];
+    const token = req.headers["x-auth-token"];
+    console.log("token is", typeof req.headers["x-auth-token"]);
     console.log("token is", req.headers["x-auth-token"]);
 
     if (!token) {
+        console.log("no token in get prompts messages");
         return res.status(401).json({ msg: "No Token. Authorization Denied." });
     }
     try {
